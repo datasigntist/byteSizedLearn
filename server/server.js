@@ -6,7 +6,10 @@ const restify = require('restify');
 
 const curatedContentRepoAccess = require('./../curatedContentRepo/curatedContentRepoAccess.js');
 
-var connector = new botBuilder.ChatConnector();
+var connector = new botBuilder.ChatConnector({
+  appId: '9c1c33de-b881-4e7d-aba2-d006d90d225f',
+  appPassword: 'HFTYtEdbibOgSEaM0P0a2sE'
+});
 
 var bot = new botBuilder.UniversalBot(connector);
 
@@ -22,7 +25,7 @@ bot.on('conversationUpdate', function (message) {
 });
 
 //waterfall model -- where one function is calling the other and passing down the results
-bot.dialog('/',[   
+bot.dialog('/',[
     function(session){
         session.send('Welcome to byte sized learning an experimental approach to learning small bytes of curated content at your own pace. You can get more details around this concept by visiting this web page. In order you to get kick started we require a few details');
         session.beginDialog('/askEmailId');
@@ -32,7 +35,7 @@ bot.dialog('/',[
     }
 ]);
 
-bot.dialog('/restartDialogue',[   
+bot.dialog('/restartDialogue',[
     function(session){
         session.beginDialog('/askOption');
     },
@@ -63,18 +66,18 @@ bot.dialog('/askFeedback', [
         botBuilder.Prompts.choice(session, 'How would you rate the content between 1 and 5 where 5 being the best','1|2|3|4|5');
     },
     function (session, results) {
-        session.userData.feedbackOnContent = results.response.entity;    
+        session.userData.feedbackOnContent = results.response.entity;
         botBuilder.Prompts.choice(session, 'How would you rate your experience of the platform between 1 and 5 where 5 being the best','1|2|3|4|5');
-               
+
     },
     function(session,results){
-        session.userData.feedbackOnExperience = results.response.entity;   
+        session.userData.feedbackOnExperience = results.response.entity;
 
         curatedContentRepoAccess.recordFeedback(session.userData.userName,session.userData.enrolledModule,session.userData.feedbackOnContent,session.userData.feedbackOnExperience,(err, pretrievedContent) =>
         {
             session.send('Thanks a TON for your feedback');
             session.replaceDialog('/askQuit');
-        });           
+        });
     },
 ]);
 
@@ -113,7 +116,7 @@ bot.dialog('/askOption', [
             if(!err){
                 session.userData.knowledgeStep = pretrievedContent.learningStep.toString();
                 session.endDialogWithResult(results);
-            } 
+            }
             else {
                 curatedContentRepoAccess.insertProgress(session.userData.userName,session.userData.enrolledModule,(err, pretrievedContent) =>
                 {
@@ -135,7 +138,7 @@ bot.dialog('/byteSizedLearning',[
         else if(session.message.text === "help") {
             session.send('Here is the list of commands that you can use for navigation\n 1) key in "quit" to close the conversation \n 2) key in "next" to move forward');
         }
-        else 
+        else
         {
             curatedContentRepoAccess.getCuratedContent(session.userData.knowledgeStep,session.userData.enrolledModule,(err, pretrievedContent) =>
             {
@@ -143,7 +146,7 @@ bot.dialog('/byteSizedLearning',[
 
                 curatedContentRepoAccess.updatePoints(session.userData.userName,0,(err, pretrievedContent) =>
                 {
-                });              
+                });
 
                 if(!err){
                     var contentType = pretrievedContent.contentType.toString();
@@ -151,14 +154,14 @@ bot.dialog('/byteSizedLearning',[
                     var filtContentOptions = contentOptions.filter(value => Object.keys(value).length !== 0);
 
                     session.userData.contentType = contentType;
-                    
+
                     if (contentType === "TextContent"){
 
                         session.userData.correctOption = "Undefined";
                         botBuilder.Prompts.text(session, pretrievedContent.contentDescription);
 
                     } else if (contentType === "VideoContent") {
-    
+
 
                         var card =  new botBuilder.VideoCard(session)
                         .title(pretrievedContent.contentDescription)
@@ -166,16 +169,16 @@ bot.dialog('/byteSizedLearning',[
                         .buttons([botBuilder.CardAction.openUrl(session, pretrievedContent.contentURL, 'Full Screen')]);
                         var msg = new botBuilder.Message(session).addAttachment(card);
 
-                        session.send(msg);                    
-                        
+                        session.send(msg);
+
                         knowledgeStep = knowledgeStep + 1;
-                        session.userData.knowledgeStep =knowledgeStep;    
-                        
+                        session.userData.knowledgeStep =knowledgeStep;
+
 
                         curatedContentRepoAccess.updateProgress(session.userData.userName,session.userData.enrolledModule,session.userData.knowledgeStep,0,(err, pretrievedContent) =>
                         {
-                        });                      
-                        
+                        });
+
 
                     } else if (contentType === "ImageContent") {
 
@@ -192,7 +195,7 @@ bot.dialog('/byteSizedLearning',[
 
                         curatedContentRepoAccess.updateProgress(session.userData.userName,session.userData.enrolledModule,session.userData.knowledgeStep,0,(err, pretrievedContent) =>
                         {
-                        });                      
+                        });
 
 
                     } else if (contentType === "MixedContent") {
@@ -204,18 +207,18 @@ bot.dialog('/byteSizedLearning',[
                         session.send(msg);
 
                         knowledgeStep = knowledgeStep + 1;
-                        session.userData.knowledgeStep =knowledgeStep;         
+                        session.userData.knowledgeStep =knowledgeStep;
 
                         curatedContentRepoAccess.updateProgress(session.userData.userName,session.userData.enrolledModule,session.userData.knowledgeStep,0,(err, pretrievedContent) =>
                         {
-                        });                           
+                        });
 
                     } else if (contentType === "Inquiry"){
 
                         session.userData.correctOption = pretrievedContent.correctOption.toString();
                         botBuilder.Prompts.choice(session, pretrievedContent.contentDescription, filtContentOptions);
-                        
-                    }    
+
+                    }
                 } else {
                     session.replaceDialog('/askFeedback');
                 }
@@ -230,14 +233,14 @@ bot.dialog('/byteSizedLearning',[
         var contentType = session.userData.contentType;
 
         if (userResponse === "quit") {
-            
+
             session.endConversation('Hope you had fun time learning. Looking forward to see you soon');
 
         } else if (userResponse === "next") {
 
             knowledgeStep = knowledgeStep + 1;
             session.userData.knowledgeStep =knowledgeStep;
-                     
+
             session.replaceDialog('/byteSizedLearning');
 
         }  else if (contentType === 'Inquiry'  && selectedOption === session.userData.correctOption) {
@@ -249,16 +252,16 @@ bot.dialog('/byteSizedLearning',[
 
             curatedContentRepoAccess.updateProgress(session.userData.userName,session.userData.enrolledModule,session.userData.knowledgeStep,0,(err, pretrievedContent) =>
             {
-            }); 
+            });
 
             curatedContentRepoAccess.updatePoints(session.userData.userName,50,(err, pretrievedContent) =>
             {
-            });              
+            });
 
             session.replaceDialog('/byteSizedLearning');
 
-           
-            
+
+
         } else if (contentType === 'Inquiry'  && !(selectedOption === session.userData.correctOption))  {
 
             knowledgeStep = knowledgeStep + 1;
@@ -289,7 +292,7 @@ bot.dialog('/byteSizedLearning',[
 //             }
 //         });
 //         //botBuilder.Prompts.text(session, 'Please enter your name');
-        
+
 //     },
 //     (session, result) => {
 //             session.send(`You said ${result.response}`);
