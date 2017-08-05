@@ -2,8 +2,7 @@ const request = require('request');
 
 //const apiKey = '4742d2564ae332ec2c54eaa847bd554d'
 
-//const serverURL = 'http://localhost:3000/';
-const serverURL = 'https://still-castle-18778.herokuapp.com';
+const serverURL = 'http://localhost:3000';
 
 var getCuratedContent = function(pknowledgeStep,pcontentSubjectArea,callback) {
 
