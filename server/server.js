@@ -160,12 +160,43 @@ bot.dialog('/byteSizedLearning',[
                         session.userData.correctOption = "Undefined";
                         botBuilder.Prompts.text(session, pretrievedContent.contentDescription);
 
+                    } else if (contentType === "MediaContent") {
+
+                        var msg = session.message;
+                        session.send({
+                            text: pretrievedContent.contentDescription,
+                            attachments: [{
+                                name: "Click Here for the Video",
+                                contentUrl: pretrievedContent.contentURL
+                            }
+                            ]
+                        });
+
+                        // var card =  new botBuilder.VideoCard(session)
+                        // .title(pretrievedContent.contentDescription)
+                        // .media([{ url: pretrievedContent.contentURL }])
+                        // .image([{}])
+                        // .buttons([botBuilder.CardAction.openUrl(session, pretrievedContent.contentURL, 'Full Screen')]);
+                        // var msg = new botBuilder.Message(session).addAttachment(card);       
+                        
+                        // session.send(msg);                           
+
+                        knowledgeStep = knowledgeStep + 1;
+                        session.userData.knowledgeStep =knowledgeStep;    
+                        
+
+                        curatedContentRepoAccess.updateProgress(session.userData.userName,session.userData.enrolledModule,session.userData.knowledgeStep,0,(err, pretrievedContent) =>
+                        {
+                        });  
+                        
+
                     } else if (contentType === "VideoContent") {
 
 
                         var card =  new botBuilder.VideoCard(session)
                         .title(pretrievedContent.contentDescription)
                         .media([{ url: pretrievedContent.contentURL }])
+                        .image([{}])
                         .buttons([botBuilder.CardAction.openUrl(session, pretrievedContent.contentURL, 'Full Screen')]);
                         var msg = new botBuilder.Message(session).addAttachment(card);
 
