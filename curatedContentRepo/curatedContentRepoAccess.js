@@ -2,8 +2,7 @@ const request = require('request');
 
 //const apiKey = '4742d2564ae332ec2c54eaa847bd554d'
 
-//const serverURL = 'http://localhost:3000/';
-const serverURL = 'https://still-castle-18778.herokuapp.com';
+const serverURL = 'http://localhost:3000/';
 
 var getCuratedContent = function(pknowledgeStep,pcontentSubjectArea,callback) {
 
@@ -66,7 +65,7 @@ var getUserEnrolledModuleData = function(pUserName, pEnrolledModule, callback) {
       callback('Unable to connect to the Server');
     }
   });
-  
+
 };
 
 var insertProgress = function(pUserName, pEnrolledModule, callback2) {
@@ -82,7 +81,7 @@ var insertProgress = function(pUserName, pEnrolledModule, callback2) {
       callback2('Unable to connect to the Server');
     }
   });
-  
+
 };
 
 var recordFeedback = function(pUserName, pEnrolledModule, pfeedbackOnContent,pfeedbackOnExperience, callback) {
@@ -98,7 +97,7 @@ var recordFeedback = function(pUserName, pEnrolledModule, pfeedbackOnContent,pfe
       callback('Unable to connect to the Server');
     }
   });
-  
+
 };
 
 var recordLog = function(pUserName, pEnrolledModule, callback) {
@@ -114,7 +113,7 @@ var recordLog = function(pUserName, pEnrolledModule, callback) {
       callback('Unable to connect to the Server');
     }
   });
-  
+
 };
 
 var updateProgress = function(pUserName, pEnrolledModule, pLearningStep, pEarnedKnowledgePoints, callback) {
@@ -130,7 +129,7 @@ var updateProgress = function(pUserName, pEnrolledModule, pLearningStep, pEarned
       callback('Unable to connect to the Server');
     }
   });
-  
+
 };
 
 var updatePoints = function(pUserName, pEarnedKnowledgePoints, callback) {
@@ -146,7 +145,7 @@ var updatePoints = function(pUserName, pEarnedKnowledgePoints, callback) {
       callback('Unable to connect to the Server');
     }
   });
-  
+
 };
 
 module.exports = {
