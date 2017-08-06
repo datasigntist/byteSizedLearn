@@ -7,8 +7,7 @@ const restify = require('restify');
 const curatedContentRepoAccess = require('./../curatedContentRepo/curatedContentRepoAccess.js');
 
 var connector = new botBuilder.ChatConnector({
-  appId: '9c1c33de-b881-4e7d-aba2-d006d90d225f',
-  appPassword: 'HFTYtEdbibOgSEaM0P0a2sE'
+
 });
 
 var bot = new botBuilder.UniversalBot(connector);
@@ -200,7 +199,7 @@ bot.dialog('/byteSizedLearning',[
                         var card =  new botBuilder.VideoCard(session)
                         .title(pretrievedContent.contentDescription)
                         .media([{ url: pretrievedContent.contentURL }])
-                        .image([{}])
+                        .image(botBuilder.CardImage.create(session, 'https://upload.wikimedia.org/wikipedia/commons/thumb/c/c5/Big_buck_bunny_poster_big.jpg/220px-Big_buck_bunny_poster_big.jpg'))
                         .buttons([botBuilder.CardAction.openUrl(session, pretrievedContent.contentURL, 'Full Screen')]);
                         var msg = new botBuilder.Message(session).addAttachment(card);
 
