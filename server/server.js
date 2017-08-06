@@ -27,7 +27,7 @@ bot.on('conversationUpdate', function (message) {
 //waterfall model -- where one function is calling the other and passing down the results
 bot.dialog('/',[
     function(session){
-        session.send('Welcome to byte sized learning an experimental approach to learning small bytes of curated content at your own pace. You can get more details around this concept by visiting this web page. In order you to get kick started we require a few details');
+        session.send('Welcome to byte sized learning an experimental approach to learning small bytes of curated content at your own pace. You can get more details around this concept by visiting this web page http://bytebasedlearning.blogspot.in/p/justintimelearning.html \n. In order you to get kick started we require a few details');
         session.beginDialog('/askEmailId');
     },
     function(session,results){
@@ -159,6 +159,10 @@ bot.dialog('/byteSizedLearning',[
 
                         session.userData.correctOption = "Undefined";
                         botBuilder.Prompts.text(session, pretrievedContent.contentDescription);
+
+                    } else if (contentType === "VanillaTextContent") {
+
+                        session.send(`${pretrievedContent.contentDescription} \n Click Here to View the Video ${pretrievedContent.contentURL}`);
 
                     } else if (contentType === "MediaContent") {
 
